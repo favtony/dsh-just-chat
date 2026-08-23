@@ -1,0 +1,6 @@
+- id: ui-workspace
+  disabled: true
+
+- insert:
+    - id: dsh-just-chat
+      name: dsh-just-chat
