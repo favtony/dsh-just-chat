@@ -10,7 +10,6 @@ import {
 } from './isolated-environment.mjs'
 
 const PACKAGE_NAME = 'dsh-just-chat'
-const DSH_VERSION = '0.1.1-rc.2'
 const PORT = 3188
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const tarball = join(root, '.artifacts', `${PACKAGE_NAME}-0.1.0.tgz`)
@@ -28,7 +27,7 @@ const dshInvocation = (() => {
 await access(tarball)
 await access(browsePatch)
 const environment = await createIsolatedEnvironment()
-const profile = `${PACKAGE_NAME}-e2e-${environment.token}`
+const profile = 'web'
 const conversationRoot = join(environment.dshHome, 'conversation-root')
 const workspaceRoot = join(environment.dshHome, 'workspace-root')
 await mkdir(conversationRoot)
@@ -48,12 +47,9 @@ function run(args) {
 }
 
 try {
-  run(['plugin', '--profile', profile, 'add', `@deepseek-ai/dsh-web-app@${DSH_VERSION}`, tarball])
+  run(['plugin', '--profile', profile, 'add', tarball])
   const manifestPath = join(environment.dshHome, 'profiles', profile, 'package.json')
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-  if (manifest.dependencies?.['@deepseek-ai/dsh-web-app'] !== DSH_VERSION) {
-    throw new Error('隔离 profile 没有固定到指定的官方 Web 包版本。')
-  }
   if (typeof manifest.dependencies?.[PACKAGE_NAME] !== 'string') {
     throw new Error('隔离 profile 没有安装待测插件包。')
   }
@@ -70,8 +66,7 @@ try {
 
   const child = spawn(dshInvocation.command, [
     ...dshInvocation.prefix,
-    '--profile',
-    profile,
+    'web',
     '--patch',
     browsePatch,
     '--port',

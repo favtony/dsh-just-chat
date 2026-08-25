@@ -1,3 +1,4 @@
 node_modules/
 .artifacts/
 .agent-teams/
+.pnpm-store/

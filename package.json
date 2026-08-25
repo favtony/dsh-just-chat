@@ -49,8 +49,16 @@
     "start:isolated-web": "node scripts/start-isolated-web.mjs",
     "cleanup:isolated-profile": "node scripts/cleanup-isolated-profile.mjs"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-brand": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-invariants": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-settings": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-storage": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-storage-domain": "0.1.1-rc.2",
+    "@deepseek-ai/schemastery": "3.18.1"
+  },
+  "peerDependencies": {
     "@deepseek-ai/dsh-api-remotes": "0.1.1-rc.2",
     "@deepseek-ai/dsh-client-connection": "0.1.1-rc.2",
     "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.2",
@@ -62,15 +70,10 @@
     "@deepseek-ai/dsh-client-ui-workspace": "0.1.1-rc.2",
     "@deepseek-ai/dsh-host-webserver": "0.1.1-rc.2",
     "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
-    "@deepseek-ai/dsh-settings": "0.1.1-rc.2",
-    "@deepseek-ai/schemastery": "3.18.1",
-    "@deepseek-ai/dsh-storage-domain": "0.1.1-rc.2",
-    "@deepseek-ai/dsh-storage-json": "0.1.1-rc.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
     "@deepseek-ai/dsh-api-remotes": "0.1.1-rc.2",
     "@deepseek-ai/dsh-client-connection": "0.1.1-rc.2",
@@ -83,10 +86,6 @@
     "@deepseek-ai/dsh-client-ui-workspace": "0.1.1-rc.2",
     "@deepseek-ai/dsh-host-webserver": "0.1.1-rc.2",
     "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
-    "@deepseek-ai/dsh-settings": "0.1.1-rc.2",
-    "@deepseek-ai/schemastery": "3.18.1",
-    "@deepseek-ai/dsh-storage-domain": "0.1.1-rc.2",
-    "@deepseek-ai/dsh-storage-json": "0.1.1-rc.2",
     "@types/node": "^22.20.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",

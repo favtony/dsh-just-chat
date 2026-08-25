@@ -22,7 +22,6 @@ const NODE_EXTERNALS = [
   '@deepseek-ai/dsh-session-persistence',
   '@deepseek-ai/dsh-settings',
   '@deepseek-ai/dsh-storage-domain',
-  '@deepseek-ai/dsh-storage-json',
   'react',
   'react-dom',
 ]
