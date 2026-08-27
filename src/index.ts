@@ -4,6 +4,7 @@ import { ConversationPreparationService } from './host/preparation.ts'
 import { recoverConversationRecords, getLiveSessions, type SessionPersistenceLike } from './host/recovery.ts'
 import { openConversationRecords } from './host/records.ts'
 import { registerConversationSettings } from './host/settings.ts'
+import { assertHostCompatibility } from './host/compat.ts'
 
 /** Cordis plugin name. */
 export const name = 'dsh-just-chat'
@@ -13,6 +14,7 @@ export const inject = ['webServer', 'settings', 'storageDomain', 'sessionPersist
 
 /** Install settings, durable records, recovery, and the HTTP route on one fiber. */
 export function apply(ctx: Context): void {
+  assertHostCompatibility()
   ctx.inject(inject, hostCtx => {
     const settings = registerConversationSettings(hostCtx)
     hostCtx.effect(async () => {

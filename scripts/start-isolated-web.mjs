@@ -13,7 +13,6 @@ const PACKAGE_NAME = 'dsh-just-chat'
 const PORT = 3188
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const tarball = join(root, '.artifacts', `${PACKAGE_NAME}-0.1.0.tgz`)
-const browsePatch = join(root, 'scripts', 'isolated-web-browse.patch.yml')
 
 const dshInvocation = (() => {
   if (process.platform !== 'win32') return { command: 'dsh', prefix: [] }
@@ -25,7 +24,6 @@ const dshInvocation = (() => {
 })()
 
 await access(tarball)
-await access(browsePatch)
 const environment = await createIsolatedEnvironment()
 const profile = 'web'
 const conversationRoot = join(environment.dshHome, 'conversation-root')
@@ -67,8 +65,6 @@ try {
   const child = spawn(dshInvocation.command, [
     ...dshInvocation.prefix,
     'web',
-    '--patch',
-    browsePatch,
     '--port',
     String(PORT),
     '--no-open',

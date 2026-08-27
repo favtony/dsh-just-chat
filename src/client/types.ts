@@ -1,7 +1,7 @@
 import type { ClientRemote } from '@deepseek-ai/dsh-api-remotes/client'
-import type { HostObservable, OwnerOf, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import type { HostObservable, InjectFace, OwnerOf, PropsLocale, PropsRenderSlots, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { SessionId, SessionListState, SessionSummary, WorkspaceId, WorkspaceListState, WorkspaceView } from '@deepseek-ai/dsh-client-runtime/client'
-import type { EmptyWorkspaceOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { ComposerBarInjected, EmptyWorkspaceOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type { SettingsScope } from '@deepseek-ai/dsh-client-runtime/client'
 import type { WorkspaceBrowserProps, WorkspacePickerProps } from '@deepseek-ai/dsh-client-ui-workspace/client'
 import type { SubmissionController } from './handoff.ts'
@@ -10,9 +10,13 @@ export type { ClientRemote, EmptyWorkspaceOwnerProps, SessionId, SessionListStat
 export type { SidebarSectionOwnerProps } from '@deepseek-ai/dsh-client-ui-sidebar/client'
 export type HeroWorkspaceOwnerProps = OwnerOf<'conversation.hero.workspace'>
 export type ComposerBarOwnerProps = PropsRuntime<'conversation.composer.bar'>
-export type ComposerBarProps = ComposerBarOwnerProps
-export type InputActions = ComposerBarOwnerProps extends { inputActions?: infer A } ? NonNullable<A> : never
-export type InputState = ComposerBarOwnerProps extends { useInput?: (selector: (state: infer S) => unknown, ...args: never[]) => unknown } ? S : never
+/** The exact public composition used by ui-conversation's InputBar entry. */
+export type ComposerBarProps = PropsRuntime<'conversation.composer.bar'>
+  & PropsRenderSlots<'conversation.input.attachments' | 'conversation.input.plan' | 'conversation.input.model'>
+  & InjectFace<ComposerBarInjected>
+  & PropsLocale<'conversation'>
+export type InputActions = NonNullable<ComposerBarProps['inputActions']>
+export type InputState = NonNullable<NonNullable<ComposerBarInjected['keyboard']>['snapshot']>
 export type RemoteEvents = Pick<ClientRemote, '$on'>
 
 export interface ConversationRecord {

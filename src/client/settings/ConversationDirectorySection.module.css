@@ -1,0 +1,105 @@
+.dshJustChatSettingsRoot {
+  width: 100%;
+  max-width: 760px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.dshJustChatSettingsHeading {
+  margin: 0 0 4px;
+  color: var(--dsw-alias-label-primary);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.dshJustChatSettingsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+}
+
+.dshJustChatSettingsRowText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 48px;
+}
+
+.dshJustChatSettingsTitle {
+  color: var(--dsw-alias-label-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.dshJustChatSettingsDescription {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.dshJustChatSettingsPathControl {
+  display: flex;
+  flex: 0 1 360px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dshJustChatSettingsPathInput {
+  flex: 1;
+  min-width: 180px;
+}
+
+.dshJustChatSettingsTemplateInput {
+  flex: 0 1 360px;
+  min-width: 240px;
+}
+
+.dshJustChatSettingsActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 20px;
+}
+
+.dshJustChatSettingsPreview {
+  display: block;
+  margin-top: 12px;
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsw-font-family-code);
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.dshJustChatSettingsError {
+  margin: 8px 0 0;
+  color: var(--dsw-alias-state-error-primary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+@media (max-width: 640px) {
+  .dshJustChatSettingsRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dshJustChatSettingsRowText {
+    padding-right: 0;
+  }
+
+  .dshJustChatSettingsPathControl,
+  .dshJustChatSettingsTemplateInput {
+    width: 100%;
+    max-width: none;
+    flex: none;
+  }
+}

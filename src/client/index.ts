@@ -1,11 +1,13 @@
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import type { WorkspacePickerProps } from '@deepseek-ai/dsh-client-ui-workspace/client'
-import type { HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
+import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
 import { createJustChatApi } from './api.ts'
-import { ComposerBar } from './ComposerBar.tsx'
-import { createComposerTakeover, type ComposerTakeover } from './composer-takeover.ts'
+import { createComposerBarAdapter } from './ComposerBarAdapter.tsx'
+import { createConversationAdapter } from './ConversationAdapter.tsx'
+import { createSidebarBrowserAdapter } from './SidebarBrowserAdapter.tsx'
+import { createWorkspacePickerAdapter } from './WorkspacePickerAdapter.tsx'
+import { installLiveEntry, OFFICIAL_ENTRY_CONTRACTS } from './live-entry.ts'
 import { ConversationDirectorySection, type ConversationDirectoryInjected, type ConversationDirectorySettings } from './settings/ConversationDirectorySection.tsx'
 import {
   ConversationDirectoryOnboarding,
@@ -13,11 +15,8 @@ import {
 } from './settings/ConversationDirectoryOnboarding.tsx'
 import { createSubmissionController, type SessionCreateFace } from './handoff.ts'
 import { createViewStore, setConversationRecords } from './stores/view-store.ts'
-import { createConversationOrderStore, setConversationOrder } from './stores/conversation-order-store.ts'
-import { clearPendingDraft, createPendingDraftStore, setPendingDraft } from './stores/pending-draft-store.ts'
-import type { ComposerInjected, SidebarInjected, WorkspacePickerInjected } from './types.ts'
-import { SidebarBrowser } from './SidebarBrowser.tsx'
-import { WorkspacePicker } from './WorkspacePicker.tsx'
+import { createPendingDraftStore, setPendingDraft } from './stores/pending-draft-store.ts'
+import { createConversationOrderStore } from './stores/conversation-order-store.ts'
 
 
 export const inject = ['connection', 'slots', 'sessions', 'workspaces', 'remote', 'settingsScope']
@@ -47,75 +46,13 @@ export function apply(ctx: ClientContext & { connection: ConnectionHandle }): vo
     viewStore,
     pendingStore: pendingDraftStore,
   })
-  let composerTakeover: ComposerTakeover | undefined
-  const releaseComposer = (): void => {
-    if (composerTakeover === undefined) throw new Error('composer takeover is not active')
-    composerTakeover.release()
-  }
-  const directoryFlow: HostObservable<boolean> = {
-    getSnapshot: () => ctx.slots.entries('conversation.hero.workspace.directoryFlow').length > 0,
-    subscribe: listener => ctx.slots.subscribe('conversation.hero.workspace.directoryFlow', listener),
-  }
-  const sidebarDirectoryFlow: HostObservable<boolean> = {
-    getSnapshot: () => ctx.slots.entries('sidebar.workspaces.directoryFlow').length > 0,
-    subscribe: listener => ctx.slots.subscribe('sidebar.workspaces.directoryFlow', listener),
-  }
-  const injected = (): WorkspacePickerInjected & {
-    createWorkspace: WorkspacePickerProps['createWorkspace']
-    hooks: { directoryFlow: HostObservable<boolean> }
-  } => ({
-    chooseWorkspace: () => {
-      const current = pendingDraftStore.getSnapshot()
-      setPendingDraft(pendingDraftStore, 'workspace', current.draft)
-    },
-    chooseJustChat: () => {
-      const current = pendingDraftStore.getSnapshot()
-      setPendingDraft(pendingDraftStore, 'just-chat', current.draft)
-    },
-    createWorkspace: input => ctx.workspaces.create(input),
-    hooks: { directoryFlow },
-  })
-  const composerInjected = (): ComposerInjected => ({
-    hooks: { pendingDraft: pendingDraftStore, view: viewStore },
-    controller,
-    completePendingHandoff: () => { clearPendingDraft(pendingDraftStore) },
-    releaseComposer,
-    updatePendingDraft: draft => {
-      const current = pendingDraftStore.getSnapshot()
-      setPendingDraft(pendingDraftStore, current.mode, draft)
-    },
-    startPreparation: text => controller.startPreparation(text),
-  })
   const refreshConversationRecords = async (): Promise<void> => {
     setConversationRecords(viewStore, await api.listConversations())
   }
-  const sidebarInjected = (): SidebarInjected => ({
-    hooks: { view: viewStore, order: conversationOrderStore, directoryFlow: sidebarDirectoryFlow },
-    refreshConversationRecords,
-    searchMessages: async (query, signal) => {
-      const response = await ctx.sessions.search(query, signal)
-      if (!response.ok) throw new Error(response.error.message)
-      return response.value.items
-    },
-    openSession: sessionId => ctx.sessions.open(sessionId),
-    createWorkspace: async path => (await ctx.workspaces.create({ path })).workspaceId,
-    startWorkspaceSession: workspaceId => { ctx.workspaces.startSession(workspaceId) },
-    archiveSession: sessionId => ctx.workspaces.archiveSession(sessionId),
-    renameSession: async (sessionId, title) => {
-      const session = ctx.sessions.binding(sessionId)?.session
-      if (session === undefined) throw new Error(`unknown session "${sessionId}"`)
-      const response = await session.rename(title)
-      if (!response.ok) throw new Error(response.error.message)
-    },
-    forkSession: async sessionId => {
-      const childId = await ctx.sessions.fork({ sessionId, increaseTitle: true })
-      ctx.sessions.open(childId)
-    },
-    setManualOrder: (sessionId, beforeSessionId) => { setConversationOrder(conversationOrderStore, sessionId, beforeSessionId) },
-  })
   const settingsInjected = (): ConversationDirectoryInjected => ({
     hooks: { settings },
     api,
+    pickDirectory: () => ctx.workspaces.pickDirectory(),
     saveSettings,
   })
   ctx.slots.inject('settings.section', () => ctx.slots.register({
@@ -143,32 +80,51 @@ export function apply(ctx: ClientContext & { connection: ConnectionHandle }): vo
       }),
     }, ConversationDirectoryOnboarding),
   }))
-  ctx.slots.inject('conversation.composer.bar', () => {
-    const takeover = createComposerTakeover({
+  ctx.slots.inject('conversation.composer.bar', () => installLiveEntry(
+    ctx.slots,
+    'conversation.composer.bar',
+    OFFICIAL_ENTRY_CONTRACTS.composer,
+    createComposerBarAdapter({
       pending: pendingDraftStore,
-      sessions: ctx.sessions.list,
-      register: () => ctx.slots.register({
-        name: 'conversation.composer.bar',
-        priority: -1,
-        inject: composerInjected,
-      }, ComposerBar),
-    })
-    composerTakeover = takeover
-    return () => {
-      if (composerTakeover === takeover) composerTakeover = undefined
-      takeover.dispose()
-    }
-  })
-  ctx.slots.inject('conversation.hero.workspace', () => ctx.slots.register({
-    name: 'conversation.hero.workspace',
-    priority: -1,
-    children: { 'conversation.hero.workspace.directoryFlow': { kind: 'single', scope: 'root' } },
-    inject: injected,
-  }, WorkspacePicker))
-  ctx.slots.inject('sidebar.workspaces', () => ctx.slots.register({
-    name: 'sidebar.workspaces',
-    priority: -1,
-    children: { 'sidebar.workspaces.directoryFlow': { kind: 'single', scope: 'root' } },
-    inject: sidebarInjected,
-  }, SidebarBrowser))
+      view: viewStore,
+      controller,
+      updatePendingDraft: draft => {
+        const current = pendingDraftStore.getSnapshot()
+        setPendingDraft(pendingDraftStore, current.mode, draft)
+      },
+      completePendingHandoff: () => {
+        const current = pendingDraftStore.getSnapshot()
+        setPendingDraft(pendingDraftStore, 'none', '')
+      },
+      startPreparation: text => controller.startPreparation(text),
+    }),
+  ))
+  ctx.slots.inject('conversation', () => installLiveEntry(
+    ctx.slots,
+    'conversation',
+    OFFICIAL_ENTRY_CONTRACTS.conversation,
+    createConversationAdapter({ pending: pendingDraftStore }),
+  ))
+  ctx.slots.inject('conversation.hero.workspace', () => installLiveEntry(
+    ctx.slots,
+    'conversation.hero.workspace',
+    OFFICIAL_ENTRY_CONTRACTS.picker,
+    createWorkspacePickerAdapter({
+      pending: pendingDraftStore,
+      chooseWorkspace: () => {
+        const current = pendingDraftStore.getSnapshot()
+        setPendingDraft(pendingDraftStore, 'workspace', current.draft)
+      },
+      chooseJustChat: () => {
+        const current = pendingDraftStore.getSnapshot()
+        setPendingDraft(pendingDraftStore, 'just-chat', current.draft)
+      },
+    }),
+  ))
+  ctx.slots.inject('sidebar.workspaces', () => installLiveEntry(
+    ctx.slots,
+    'sidebar.workspaces',
+    OFFICIAL_ENTRY_CONTRACTS.sidebar,
+    createSidebarBrowserAdapter({ view: viewStore, order: conversationOrderStore, refreshConversationRecords }),
+  ))
 }

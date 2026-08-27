@@ -12,6 +12,7 @@ export type ConversationDirectoryInjected = {
         settings: SettingsScope<ConversationDirectorySettings>;
     };
     api: JustChatApi;
+    pickDirectory(): Promise<string | null>;
     saveSettings(rootDirectory: string, template: string): Promise<void>;
 };
 /** Settings page for the root directory and generated directory name template. */
