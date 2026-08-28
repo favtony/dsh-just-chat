@@ -216,17 +216,17 @@ export function createSidebarBrowserAdapter(
       'div',
       {
         'data-dsh-just-chat-sidebar': 'true',
-        style: { display: 'flex', flex: 1, flexDirection: 'column', minHeight: 0 },
+        style: { display: 'flex', flex: 1, flexDirection: 'column', minHeight: 0, overflowY: 'auto' },
       },
       createElement(
         'div',
-        { 'data-dsh-just-chat-section': 'workspaces', style: { display: 'flex', flex: '1 1 0', minHeight: 0 } },
+        { 'data-dsh-just-chat-section': 'workspaces', style: { display: 'flex', flex: '0 0 auto', minHeight: 0 } },
         createElement(official as React.ComponentType<WorkspaceBrowserProps>, workspaceProps),
       ),
       props.wide
         ? createElement(
             'div',
-            { 'data-dsh-just-chat-section': 'conversations', style: { display: 'flex', flex: '1 1 0', minHeight: 0 } },
+            { 'data-dsh-just-chat-section': 'conversations', style: { display: 'flex', flex: '0 0 auto', minHeight: 0 } },
             createElement(official as React.ComponentType<WorkspaceBrowserProps>, conversationProps),
           )
         : null,

@@ -15,6 +15,8 @@ export type ConversationDirectoryInjected = {
     pickDirectory(): Promise<string | null>;
     saveSettings(rootDirectory: string, template: string): Promise<void>;
 };
-/** Settings page for the root directory and generated directory name template. */
-export declare function ConversationDirectorySection(props: PropsRuntime<'settings.section'> & Omit<ConversationDirectoryInjected, 'hooks'> & PropsHooks<ConversationDirectoryInjected['hooks']>): React.ReactElement;
+type ConversationDirectoryCardProps = PropsRuntime<'settings.plugin.item'> & Omit<ConversationDirectoryInjected, 'hooks'> & PropsHooks<ConversationDirectoryInjected['hooks']>;
+/** Official plugin-configuration card for the automatic conversation directory. */
+export declare function ConversationDirectorySection(props: ConversationDirectoryCardProps): React.ReactElement | null;
+export {};
 //# sourceMappingURL=ConversationDirectorySection.d.ts.map

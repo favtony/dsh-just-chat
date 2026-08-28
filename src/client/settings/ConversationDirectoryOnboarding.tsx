@@ -48,7 +48,7 @@ export function ConversationDirectoryOnboarding(
   useEffect(() => {
     if (handled.current) return
     handled.current = true
-    props.openSection('conversation-directory')
+    props.openSection('plugins')
     props.complete()
     props.acknowledge()
   }, [props.acknowledge, props.complete, props.openSection])

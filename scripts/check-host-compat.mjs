@@ -9,6 +9,8 @@ const HOST_PACKAGES = [
   '@deepseek-ai/dsh-client-ui-layout',
   '@deepseek-ai/dsh-client-ui-workspace',
   '@deepseek-ai/dsh-client-ui-conversation',
+  '@deepseek-ai/dsh-client-ui-settings',
+  '@deepseek-ai/dsh-client-ui-settings-plugins',
 ]
 
 function absolute(value) {

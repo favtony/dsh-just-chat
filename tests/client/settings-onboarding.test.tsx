@@ -67,7 +67,7 @@ describe('缺少根目录时打开设置', () => {
     })
 
     expect(openSection).toHaveBeenCalledOnce()
-    expect(openSection).toHaveBeenCalledWith('conversation-directory')
+    expect(openSection).toHaveBeenCalledWith('plugins')
     expect(complete).toHaveBeenCalledOnce()
     expect(acknowledge).toHaveBeenCalledOnce()
   })

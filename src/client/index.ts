@@ -1,4 +1,5 @@
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@deepseek-ai/dsh-client-ui-settings-plugins/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
@@ -55,11 +56,9 @@ export function apply(ctx: ClientContext & { connection: ConnectionHandle }): vo
     pickDirectory: () => ctx.workspaces.pickDirectory(),
     saveSettings,
   })
-  ctx.slots.inject('settings.section', () => ctx.slots.register({
-    name: 'settings.section',
-    id: 'conversation-directory',
-    order: 30,
-    label: '对话目录',
+  ctx.slots.inject('settings.plugin.item', () => ctx.slots.register({
+    name: 'settings.plugin.item',
+    key: 'dsh-just-chat',
     inject: settingsInjected,
   }, ConversationDirectorySection))
   ctx.slots.inject('settings.onboarding', () => createConversationDirectoryOnboardingRegistration({
