@@ -9,9 +9,8 @@ export interface SidebarBrowserAdapterDeps {
     refreshConversationRecords(): Promise<void>;
 }
 /**
- * Reuses the host WorkspaceBrowser twice: real workspaces remain in the
- * workspace tree, while plugin-owned conversations use the official flat list
- * as a separate top-level section.
+ * Keep plugin-specific hooks in a child so the parent can switch to the
+ * untouched official component without changing its hook order.
  */
 export declare function createSidebarBrowserAdapter(deps: SidebarBrowserAdapterDeps): (official: LiveComponent<WorkspaceBrowserProps>) => LiveComponent<WorkspaceBrowserProps>;
 //# sourceMappingURL=SidebarBrowserAdapter.d.ts.map
