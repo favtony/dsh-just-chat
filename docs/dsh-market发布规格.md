@@ -94,8 +94,8 @@ README 需要提供下面的公开安装命令：
 - `git diff --check`：通过。
 - `pnpm run test`：未进入测试用例；Vitest 加载配置时因当前环境禁止子进程，报 `spawn EPERM`。
 - `pnpm run verify:isolated-profile`：未完成；脚本按规定创建并保留隔离目录，但启动 DSH 子进程时因当前环境禁止 `spawnSync node.exe`，报 `EPERM`。
-- GitHub 当前状态仍为 Private、没有 topic；未修改 GitHub 设置，已完成本地提交，未推送。
-- 当前文件的路径信息已脱敏；旧历史中的本机路径、用户名、隔离目录和所有权编号已按用户确认执行本地历史改写，远端尚未推送。
+- GitHub 当前状态为 Public、没有 topic；已将脱敏后的 main 推送到远端，未发布 npm 或 GitHub Release。
+- 当前文件和 main 历史中的本机路径、用户名、隔离目录和所有权编号已脱敏；远端 main 已更新为脱敏后的历史。
 
 ## 进度跟踪
 
@@ -108,7 +108,7 @@ README 需要提供下面的公开安装命令：
 - [x] 更新 README 的公开 GitHub 安装说明。
 - [x] 创建 MIT 许可证文件并更新 README。
 - [x] 完成构建和打包验证；隔离安装因当前环境禁止启动 node.exe 子进程而被 `spawnSync ... EPERM` 阻断。
-- [ ] 用户完成 GitHub Public 和推送。
+- [x] 用户授权并完成 GitHub Public 和脱敏历史推送。
 - [ ] 完成公开 GitHub 地址安装验证；需在允许启动子进程的环境中执行。
 
 ## 资料来源
